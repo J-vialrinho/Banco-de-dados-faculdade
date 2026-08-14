@@ -1,0 +1,7 @@
+docker ps
+docker ps -a
+docker-compose down --volumes --rmi all
+
+docker-compose up -d
+
+docker exec -it postgres_container psql -U root -d bd_aula
