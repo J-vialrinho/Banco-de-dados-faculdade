@@ -1,4 +1,4 @@
--- Active: 1788993970493@@127.0.0.1@5432@bd_vendas@public
+-- Active: 1787177433004@@127.0.0.1@5432@bd_vendas@public
 
 DROP TABLE IF EXISTS vendas_itens2;
 
@@ -78,40 +78,79 @@ INSERT INTO vendas_itens2 (venda_id, produto_id, quantidade, unidade, valor_unit
 
 
 -- Busquem todos os dados da tabela venda_itens2
+SELECT
+    *
+FROM
+    vendas_itens2;
+
+-- Vendas que o produto_id 1 está listado (venda_id, quantidade, unidade, valor_unitario, data_venda)
+SELECT
+    venda_id,
+    quantidade,
+    unidade,
+    valor_unitario,
+    data_venda
+FROM
+    vendas_itens2
+WHERE
+    produto_id = 1;
+
+-- Todas as informações da venda 2001
 
 SELECT
-    venda_id AS "Id da Venda",
-    produto_id AS "Id Produto",
-    valor_unitario AS "Valor",
-    data_venda AS "Data",
-    quantidade AS "Quantidade",
-    unidade AS "Unidade"
+    *
 FROM
     vendas_itens2
 WHERE
     venda_id = 2001;
 
-
+-- Valor total do montante da venda de todos os produtos
 SELECT
     produto_id,
     SUM(quantidade) AS qtd_total,
-    Round(SUM(quantidade * valor_unitario), 2) AS total_venda,
-    Round(SUM(quantidade * valor_unitario) / SUM(quantidade), 2) AS valor_medio_,
+    ROUND(SUM(quantidade * valor_unitario), 2) AS total_vendas,
+    ROUND(SUM(quantidade * valor_unitario) / SUM(quantidade), 2) AS valor_medio,
     unidade
 FROM
     vendas_itens2
 GROUP BY
     produto_id,
-    unidade;    
+    unidade
+ORDER BY
+    total_vendas DESC;
 
+-- Valor total de cada venda
 SELECT
     venda_id,
-    Round(SUM(quantidade * valor_unitario), 2) AS valor_total_venda,
+    ROUND(SUM(quantidade * valor_unitario), 2) AS valor_total_venda,
     data_venda
 FROM
     vendas_itens2
 GROUP BY
     venda_id,
-    data_venda;   
-Order by
-    data_venda;     
+    data_venda
+HAVING
+    COUNT(*) >= 4
+ORDER BY
+    valor_total_venda DESC;
+
+-- WHERE filtra as linhas antes do agrupamento e das funcoes de agregacao.
+-- HAVING filtra os grupos depois do agrupamento e pode usar funcoes de agregacao.
+
+-- Vendas realizadas ate 2025-09-08 cujo valor total passa de 650
+SELECT
+    venda_id,
+    data_venda,
+    ROUND(SUM(quantidade * valor_unitario), 2) AS valor_total_venda
+FROM
+    vendas_itens2
+WHERE
+    data_venda <= DATE '2025-09-08'
+GROUP BY
+    venda_id,
+    data_venda
+HAVING
+    SUM(quantidade * valor_unitario) > 650
+ORDER BY
+    data_venda,
+    venda_id;

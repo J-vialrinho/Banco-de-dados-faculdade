@@ -354,3 +354,17 @@ HAVING
 
 ORDER BY
     produto_id; ASC    
+
+SELECT
+    venda_id,
+    COUNT(*) AS quantidade_itens,
+    MAX(valor_unitario) AS maior_valor_unitario,
+    SUM(valor_unitario) AS soma_valores_unitarios
+FROM
+    vendas_itens
+GROUP BY
+    venda_id
+HAVING
+    MAX(valor_unitario) > 200
+ORDER BY
+    venda_id;
